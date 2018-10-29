@@ -164,6 +164,19 @@ def grep(command):
     except:
         print "Something went wrong... :("
 
+def sed(command):
+    try:
+        l = [pos for pos, char in enumerate(command) if char == '"']
+        first = command[l[0]+1:l[1]]
+        text = command[l[2]+1:l[3]]
+        l = [pos for pos, char in enumerate(first) if char == '/']
+        change_from = first[l[0]+1:l[1]]
+        change_to = first[l[1]+1:l[2]]
+        ls = text.split(change_from)
+        sub = change_to.join(ls)
+        print sub
+    except:
+        print "Something went wrong... :("
 
 sys.stdout.write('\033[92m\033[1m'+"You are in Python Shell now:"+'\033[0m\n')
 while 1:
@@ -200,7 +213,7 @@ while 1:
     elif command[0]=="tr":
         tr(command)
     elif command[0]=="sed":
-        pass
+        sed(raw_command)
     elif command[0]=="diff":
         pass
     elif command[0]=="exit":
