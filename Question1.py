@@ -112,8 +112,10 @@ class Product:
         self._Subgroup=subgroup
 
 class Guest:
-    def __init__(self,number):
-        self.__guestNumber=number
+    __guestnum=1
+    def __init__(self):
+        self.__guestNumber=Guest.__guestnum
+        Guest.__guestnum=Guest.__guestnum+1
 
     def getGuestNumber(self):
         return self.__guestNumber
@@ -122,10 +124,23 @@ class Guest:
         self.__guestNumber=number
 
     def ViewProducts(self):
-        pass
+        print "######### Products #########"
+        with open("Product","rb") as file:
+            while True:
+                try:
+                    p = pickle.load(file)
+                    print str(p.getId())+"\t"+p.getName()+"\t"+p.getGroup()+"\t"+p.getSubGroup()+"\t"+str(p.getPrice())
+                except EOFError:
+                    break
 
     def GetRegistered(self):
-        pass
+        name = raw_input("Enter your name:")
+        address = raw_input("Enter your address:")
+        phno = raw_input("Enter your phone no:")
+        cust = Customer(name,address,phno)
+
+        with open("Customer","a+b") as file:
+            pickle.dump(cust,file)
 
 class Customer:
     __Customerid=1
@@ -213,3 +228,7 @@ a.DeleteProducts(2)
 a.ViewProducts()
 a.ModifyProducts(1,price=40)
 a.ViewProducts()
+
+g = Guest()
+g.ViewProducts()
+g.GetRegistered()
