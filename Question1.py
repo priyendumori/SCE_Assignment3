@@ -15,13 +15,16 @@ class Admin:
 
     def ViewProducts(self):
         print "######### Products #########"
-        with open("Product","rb") as file:
-            while True:
-                try:
-                    p = pickle.load(file)
-                    print str(p.getId())+"\t"+p.getName()+"\t"+p.getGroup()+"\t"+p.getSubGroup()+"\t"+str(p.getPrice())
-                except EOFError:
-                    break
+        try:
+            with open("Product","rb") as file:
+                while True:
+                    try:
+                        p = pickle.load(file)
+                        print str(p.getId())+"\t"+p.getName()+"\t"+p.getGroup()+"\t"+p.getSubGroup()+"\t"+str(p.getPrice())
+                    except EOFError:
+                        break
+        except:
+            print "No products yet... :("
 
     def AddProducts(self,name,group,subgroup,price):
         new_prod = Product(name,group,subgroup,price)
@@ -42,7 +45,6 @@ class Admin:
         with open("Product","wb") as file:
             for p in plist:
                 pickle.dump(p,file) 
-
 
     def ModifyProducts(self,id,name=None,group=None,subgroup=None,price=None):
         plist = []
@@ -136,13 +138,16 @@ class Guest:
 
     def ViewProducts(self):
         print "######### Products #########"
-        with open("Product","rb") as file:
-            while True:
-                try:
-                    p = pickle.load(file)
-                    print str(p.getId())+"\t"+p.getName()+"\t"+p.getGroup()+"\t"+p.getSubGroup()+"\t"+str(p.getPrice())
-                except EOFError:
-                    break
+        try:
+            with open("Product","rb") as file:
+                while True:
+                    try:
+                        p = pickle.load(file)
+                        print str(p.getId())+"\t"+p.getName()+"\t"+p.getGroup()+"\t"+p.getSubGroup()+"\t"+str(p.getPrice())
+                    except EOFError:
+                        break
+        except:
+            print "No products yet... :("
 
     def GetRegistered(self):
         name = raw_input("Enter your name:")
@@ -154,7 +159,6 @@ class Guest:
             pickle.dump(cust,file)
 
 class Customer:
-    __Customerid=1
     def __init__(self,name,address,phno):
         self._Name=name
         self._Address=address
@@ -188,13 +192,16 @@ class Customer:
 
     def ViewProducts(self):
         print "######### Products #########"
-        with open("Product","rb") as file:
-            while True:
-                try:
-                    p = pickle.load(file)
-                    print str(p.getId())+"\t"+p.getName()+"\t"+p.getGroup()+"\t"+p.getSubGroup()+"\t"+str(p.getPrice())
-                except EOFError:
-                    break
+        try:
+            with open("Product","rb") as file:
+                while True:
+                    try:
+                        p = pickle.load(file)
+                        print str(p.getId())+"\t"+p.getName()+"\t"+p.getGroup()+"\t"+p.getSubGroup()+"\t"+str(p.getPrice())
+                    except EOFError:
+                        break
+        except:
+            print "No products yet... :("
 
     def MakePayment(self):
         c=None
@@ -429,42 +436,167 @@ class Payment:
         self.__CardNo=cardno
 
 
-a = Admin("admin")
-a.AddProducts("Pen","stationary","writing",5)
-a.AddProducts("Pencil","stationary","writing",2)
-a.AddProducts("Apsara Pencil","stationary","writing",2)
-a.AddProducts("Pilot Pen","stationary","writing",200)
-a.ViewProducts()
-a.DeleteProducts(2)
-a.ViewProducts()
-a.ModifyProducts(1,price=40)
-a.ViewProducts()
+# a = Admin("admin")
+# a.AddProducts("Pen","stationary","writing",5)
+# a.AddProducts("Pencil","stationary","writing",2)
+# a.AddProducts("Apsara Pencil","stationary","writing",2)
+# a.AddProducts("Pilot Pen","stationary","writing",200)
+# a.ViewProducts()
+# a.DeleteProducts(2)
+# a.ViewProducts()
+# a.ModifyProducts(1,price=40)
+# a.ViewProducts()
 
-c = Customer("ruchu","d 215 pn",886600000)
-print "add 1"
-c.AddToCart(1)
-c.ViewCart()
+# c = Customer("ruchu","d 215 pn",886600000)
+# print "add 1"
+# c.AddToCart(1)
+# c.ViewCart()
 
-print "#############################################"
-print "add 2"
-c.AddToCart(2)
-c.ViewCart()
-print "#############################################"
-print "add 3"
-c.AddToCart(3)
-c.ViewCart()
-print "#############################################"
-print "add 4"
-c.AddToCart(4)
-c.ViewCart()
-print "#############################################"
-a.DeleteProducts(4)
-c.MakePayment()
-c.ViewCart()
+# print "#############################################"
+# print "add 2"
+# c.AddToCart(2)
+# c.ViewCart()
+# print "#############################################"
+# print "add 3"
+# c.AddToCart(3)
+# c.ViewCart()
+# print "#############################################"
+# print "add 4"
+# c.AddToCart(4)
+# c.ViewCart()
+# print "#############################################"
+# a.DeleteProducts(4)
+# c.MakePayment()
+# c.ViewCart()
 
-c.BuyProducts()
-c.AddToCart(1)
-c.MakePayment()
-c.BuyProducts()
+# c.BuyProducts()
+# c.AddToCart(1)
+# c.MakePayment()
+# c.BuyProducts()
 
-c.ViewCart()
+# c.ViewCart()
+
+def adminOptions():
+    a=Admin("admin")
+    while True:
+        optString = "Press 1 to ViewProducts:\nPress 2 to AddProducts:\nPress 3 to DeleteProducts:\nPress 4 to MofidyProducts:\nPress anything else to exit:\n"
+        option = int(raw_input(optString))
+        
+        if option==1:
+            a.ViewProducts()
+        elif option==2:
+            name=raw_input("Enter details of product:\nName: ")
+            group=raw_input("Group: ")
+            subgroup=raw_input("Subgroup: ")
+            price=int(raw_input("Price: "))
+            a.AddProducts(name,group,subgroup,price)
+        elif option==3:
+            prodid=int(raw_input("Enter product id to delete: "))
+            a.DeleteProducts(prodid)
+        elif option==4:
+            prodid=int(raw_input("Enter product id to modify: "))
+            name=None
+            group=None
+            subgroup=None
+            price=None
+
+            choice=raw_input("Do you want to change name? y/n : ")
+            if choice=='y':
+                name=raw_input("Enter new name: ")
+            
+            choice=raw_input("Do you want to change group? y/n : ")
+            if choice=='y':
+                group=raw_input("Enter new group: ")
+            
+            choice=raw_input("Do you want to change subgroup? y/n : ")
+            if choice=='y':
+                subgroup=raw_input("Enter new subgroup: ")
+            
+            choice=raw_input("Do you want to change price? y/n : ")
+            if choice=='y':
+                price=raw_input("Enter new price: ")
+            
+            a.ModifyProducts(prodid,name,group,subgroup,price)
+        else:
+            return 
+    print
+
+def customerOptions():
+    name=raw_input("Enter your name: ")
+    customer=None
+    try:    
+        with open("Customer","rb") as file:
+            while True:
+                try:
+                    cust = pickle.load(file)
+                    if cust.getName()==name:
+                        customer=cust
+                        break                        
+                except EOFError:
+                    break
+    except:
+        customer=None
+
+    if customer==None:
+        print "You are not registered. Press r to get registered and e to continue"
+        choice=raw_input()
+        if choice=='r':
+            g=Guest()
+            g.GetRegistered()
+            return
+        else:
+            return
+    
+    print "Welcome ",customer.getName()
+    while True:
+        optString = "Press 1 to ViewProducts:\nPress 2 to AddToCart:\nPress 3 to DeleteFromCart:\nPress 4 to ViewCart:\nPress 5 to MakePayment:\nPress 6 to ViewBoughtProducts:\nPress anything else to exit:\n"
+        option = int(raw_input(optString))
+
+        if option==1:
+            customer.ViewProducts()
+        elif option==2:
+            prodid=int(raw_input("Enter product id to add to cart: "))
+            customer.AddToCart(prodid)
+        elif option==3:
+            prodid=int(raw_input("Enter product id to delete to cart: "))
+            customer.DeleteFromCart(prodid)
+        elif option==4:
+            customer.ViewCart()
+        elif option==5:
+            customer.MakePayment()
+        elif option==6:
+            customer.BuyProducts()
+        else:
+            return
+
+
+def guestOptions():
+    g=Guest()
+    while True:
+        optString = "Press 1 to ViewProducts:\nPress 2 to get registered:\nPress anything else to exit:\n"
+        option = int(raw_input(optString))
+
+        if option==1:
+            g.ViewProducts()
+        elif option==2:
+            g.GetRegistered()
+            return    
+        else:
+            return
+
+while True:
+    print "Press 1 for Admin"
+    print "Press 2 for Customer"
+    print "Press 3 for Guest"
+    print "Press 4 to exit"
+    choice = int(raw_input())
+    if choice==1:
+        adminOptions()
+    elif choice==2:
+        customerOptions()
+    elif choice==3:
+        guestOptions()
+    elif choice==4:
+        exit()
+    else:
+        print "Not a proper option" 
