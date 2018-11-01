@@ -33,14 +33,18 @@ class Admin:
 
     def DeleteProducts(self,id):
         plist = []
-        with open("Product","rb") as file:
-            while True:
-                try:
-                    p = pickle.load(file)
-                    if p.getId()!=id:
-                        plist.append(p)        
-                except EOFError:
-                    break
+        try:
+            with open("Product","rb") as file:
+                while True:
+                    try:
+                        p = pickle.load(file)
+                        if p.getId()!=id:
+                            plist.append(p)        
+                    except EOFError:
+                        break
+        except:
+            print "Error in reading file"
+
 
         with open("Product","wb") as file:
             for p in plist:
@@ -48,23 +52,26 @@ class Admin:
 
     def ModifyProducts(self,id,name=None,group=None,subgroup=None,price=None):
         plist = []
-        with open("Product","rb") as file:
-            while True:
-                try:
-                    p = pickle.load(file)
-                    if p.getId()==id:
-                        if name!=None:
-                            p.setName(name)
-                        if group!=None:
-                            p.setGroup(group)
-                        if subgroup!=None:
-                            p.setSubGroup(subgroup)
-                        if price!=None:
-                            p.setPrice(price)
+        try:
+            with open("Product","rb") as file:
+                while True:
+                    try:
+                        p = pickle.load(file)
+                        if p.getId()==id:
+                            if name!=None:
+                                p.setName(name)
+                            if group!=None:
+                                p.setGroup(group)
+                            if subgroup!=None:
+                                p.setSubGroup(subgroup)
+                            if price!=None:
+                                p.setPrice(price)
 
-                    plist.append(p)        
-                except EOFError:
-                    break
+                        plist.append(p)        
+                    except EOFError:
+                        break
+        except:
+            print "Error in reading file"
 
         with open("Product","wb") as file:
             for p in plist:
@@ -83,7 +90,7 @@ class Product:
         self._Group=group
         self._Subgroup=subgroup
         self._Price=price
-        id=-1
+        id=0
         try:    
             with open("Product","rb") as file:
                   while True:
@@ -184,11 +191,14 @@ class Customer:
         return self._Name
 
     def BuyProducts(self):
-        with open("Bought","rb") as file:
-            bl = pickle.load(file)
-            l = bl[self.getId()]
-            for p in l:
-                print p.getName(), p.getPrice()
+        try:
+            with open("Bought","rb") as file:
+                bl = pickle.load(file)
+                l = bl[self.getId()]
+                for p in l:
+                    print p.getName(), p.getPrice()
+        except:
+            print "Error reading file"
 
     def ViewProducts(self):
         print "######### Products #########"
@@ -226,15 +236,17 @@ class Customer:
             return
 
         bought_products = c.getProductList()
-        bp = c.getProductList()
         available_prod = []
-        with open("Product","rb") as file:
-            while True:
-                try:
-                    p = pickle.load(file)
-                    available_prod.append(p.getId())
-                except EOFError:
-                    break
+        try:
+            with open("Product","rb") as file:
+                while True:
+                    try:
+                        p = pickle.load(file)
+                        available_prod.append(p.getId())
+                    except EOFError:
+                        break
+        except:
+            print "Error reading file"
 
         av_cart = [x for x in bought_products if x.getId() in available_prod]
         bought_products = av_cart
@@ -280,31 +292,39 @@ class Customer:
                 pickle.dump(i,file)
 
     def ViewCart(self):
-        with open("Cart","rb") as file:
-            while True:
-                try:
-                    c = pickle.load(file)
-                    print c.getNumberOfProducts()
-                    ls = c.getProductList()
-                    for l in ls:
-                        print l.getName(),l.getPrice()
-                    print c.getTotal()
-                except EOFError:
-                    break
-        print
+        try:
+            with open("Cart","rb") as file:
+                print "########### Items in Cart ############"
+                while True:
+                    try:
+                        c = pickle.load(file)
+                        print c.getNumberOfProducts()
+                        ls = c.getProductList()
+                        for l in ls:
+                            print l.getName(),l.getPrice()
+                        print c.getTotal()
+                    except EOFError:
+                        break
+            print
+        except:
+            print "Error reading file"
 
     def AddToCart(self,prodid):
         p=None
-        with open("Product","rb") as file:
-            while True:
-                try:
-                    p = pickle.load(file)
-                    if p.getId()==prodid:
+        try:
+            with open("Product","rb") as file:
+                while True:
+                    try:
+                        p = pickle.load(file)
+                        if p.getId()==prodid:
+                            break
+                    except EOFError:
+                        p=None
                         break
-                except EOFError:
-                    p=None
-                    break
-
+        except:
+            print "Error reading file"
+            return 
+            
         if p==None:
             print "No such product"
             return
@@ -333,7 +353,7 @@ class Customer:
             l = c.getProductList()
             l.append(p)
             c.setProductList(l)
-            c.setTotal(c.getTotal()+p.getPrice())
+            c.setTotal(int(c.getTotal())+int(p.getPrice()))
 
         cartlist.append(c)
         
@@ -375,7 +395,7 @@ class Customer:
         l.remove(r)
         c.setNumberOfProducts(c.getNumberOfProducts()-1)
         c.setProductList(l)
-        c.setTotal(c.getTotal()-r.getPrice())
+        c.setTotal(int(c.getTotal())-int(r.getPrice()))
         cartlist.append(c)
 
         with open("Cart","wb") as file:
@@ -480,8 +500,12 @@ def adminOptions():
     a=Admin("admin")
     while True:
         optString = "Press 1 to ViewProducts:\nPress 2 to AddProducts:\nPress 3 to DeleteProducts:\nPress 4 to MofidyProducts:\nPress anything else to exit:\n"
-        option = int(raw_input(optString))
-        
+        option = raw_input(optString)
+        try:
+            option = int(option)
+        except:
+            return
+
         if option==1:
             a.ViewProducts()
         elif option==2:
@@ -550,7 +574,11 @@ def customerOptions():
     print "Welcome ",customer.getName()
     while True:
         optString = "Press 1 to ViewProducts:\nPress 2 to AddToCart:\nPress 3 to DeleteFromCart:\nPress 4 to ViewCart:\nPress 5 to MakePayment:\nPress 6 to ViewBoughtProducts:\nPress anything else to exit:\n"
-        option = int(raw_input(optString))
+        option = raw_input(optString)
+        try:
+            option = int(option)
+        except:
+            return
 
         if option==1:
             customer.ViewProducts()
@@ -574,7 +602,12 @@ def guestOptions():
     g=Guest()
     while True:
         optString = "Press 1 to ViewProducts:\nPress 2 to get registered:\nPress anything else to exit:\n"
-        option = int(raw_input(optString))
+        option = raw_input(optString)
+
+        try:
+            option = int(option)
+        except:
+            return
 
         if option==1:
             g.ViewProducts()
@@ -589,7 +622,13 @@ while True:
     print "Press 2 for Customer"
     print "Press 3 for Guest"
     print "Press 4 to exit"
-    choice = int(raw_input())
+    choice = raw_input()
+    try:
+        choice = int(choice)
+    except:
+        print "Not a proper option"
+        continue
+
     if choice==1:
         adminOptions()
     elif choice==2:
