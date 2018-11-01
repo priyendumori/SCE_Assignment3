@@ -178,6 +178,31 @@ def sed(command):
     except:
         print "Something went wrong... :("
 
+def diff(f1,f2):
+    if not os.path.isfile(f1):
+        print "not a file"
+        return
+
+    if not os.path.isfile(f2):
+        print "not a file"
+        return
+
+    with open(f1) as f:
+        l1 = f.read().splitlines()
+
+    with open(f2) as f:
+        l2 = f.read().splitlines()
+
+    print "lines removed:"
+    for i in l1:
+        if i not in l2:
+            print i
+
+    print "lines added:"
+    for i in l2:
+        if i not in l1:
+            print i
+
 sys.stdout.write('\033[92m\033[1m'+"You are in Python Shell now:"+'\033[0m\n')
 while 1:
     cwd = os.getcwd()
@@ -215,7 +240,10 @@ while 1:
     elif command[0]=="sed":
         sed(raw_command)
     elif command[0]=="diff":
-        pass
+        if len(command)>2:
+            diff(command[1],command[2])
+        else:
+            print "Wrong number of arguments"
     elif command[0]=="exit":
         exit()
     else:
